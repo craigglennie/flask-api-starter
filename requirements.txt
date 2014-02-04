@@ -1,0 +1,13 @@
+ipython
+flask
+flask-login
+flask-restful
+sqlalchemy
+alembic
+psycopg2
+passlib
+factory_boy
+# WTForms 2.0 isn't on PyPi at the time of writing
+#-e git+https://github.com/wtforms/wtforms.git#egg=WTForms
+WTForms-json
+WTForms-alchemy
