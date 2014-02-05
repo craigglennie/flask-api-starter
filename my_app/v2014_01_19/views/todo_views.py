@@ -1,5 +1,5 @@
 from flask import request
-from flask.ext.restful import fields, Resource, marshal_with
+from flask.ext.restful import fields, Resource, marshal_with, abort
 from wtforms_alchemy import ModelForm
 import wtforms_json
 
@@ -12,6 +12,10 @@ resource_fields = {
     "id": fields.Integer,
     "text": fields.String,
     "is_done": fields.Boolean,
+    # TODO: The blueprint (version) endpoint should be opaque to this class,
+    # but we need it so that Flask can build a URL for the object.
+    # Is there a way around this?
+    "uri": fields.Url('2014-01-19.todo'),
 }
 
 class ToDoForm(ModelForm):
@@ -33,20 +37,21 @@ class ToDoResource(Resource):
         return todo
 
     @marshal_with(resource_fields)
-    def get(self, todo_id=None):
-        if todo_id:
-            todo = ToDo.query.filter(ToDo.id==todo_id).one()
-            assert todo, "Handle missing todo"
-            return todo
+    def get(self, id=None):
+        if id:
+            todo = ToDo.query.filter(ToDo.id==id).first()
+            if todo:
+                return todo
+            abort(404, id=id, message="ID %s not found" % id)
         return sorted(ToDo.query, key=lambda x: x.id)
-        assert False, "handle listing todos"
 
     @marshal_with(resource_fields)
-    def put(self, todo_id):
-        todo = ToDo.query.filter(ToDo.id==todo_id).one()
+    def put(self, id):
+        todo = ToDo.query.filter(ToDo.id==id).first()
+        if not todo:
+            abort(404, id=id, message="ID %s not found" % id)
         self._update(todo)
         return todo
         #TODO: "validate etag"
-        #TODO: "Handle missing todo"
 
 

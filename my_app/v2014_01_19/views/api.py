@@ -8,6 +8,6 @@ VERSION = "2014-01-19"
 blueprint = Blueprint(VERSION, __name__)
 
 api = restful.Api(blueprint, prefix="/" + VERSION)
-api.add_resource(ToDoResource, "/todos/<int:todo_id>", endpoint="todo")
+api.add_resource(ToDoResource, "/todos/<int:id>", endpoint="todo")
 api.add_resource(ToDoResource, "/todos", endpoint="todos")
 
