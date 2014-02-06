@@ -101,6 +101,10 @@ class APITestCase(BaseTestCase):
         serialized = json.dumps(kwargs)
         return self._assert_response_status(self.client.post, url, expect_status_code, data=serialized)
 
+    def json_DELETE(self, url, expect_status_code=200):
+        """Helper function for making POSTs with JSON content"""
+        return self._assert_response_status(self.client.delete, url, expect_status_code)
+
     def json_PUT(self, url, expect_status_code=200, **kwargs):
         """Helper function for making PUTs with JSON content"""
         serialized = json.dumps(kwargs)
@@ -138,3 +142,11 @@ class ResourceTestCase(APITestCase):
             expect_status_code=expect_status_code,
             **kwargs
         )
+
+    def json_DELETE(self, id, expect_status_code=200):
+        url = "%s/%s" % (self.url, id)
+        return super(ResourceTestCase, self).json_DELETE(
+            url,
+            expect_status_code=expect_status_code,
+        )
+

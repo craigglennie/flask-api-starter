@@ -22,6 +22,7 @@ class ToDoForm(ModelForm):
     class Meta:
         model = ToDo
 
+# TODO: Auth!
 class ToDoResource(Resource):
 
     def _update(self, todo):
@@ -40,9 +41,9 @@ class ToDoResource(Resource):
     def get(self, id=None):
         if id:
             todo = ToDo.query.filter(ToDo.id==id).first()
-            if todo:
-                return todo
-            abort(404, id=id, message="ID %s not found" % id)
+            if not todo:
+                abort(404, id=id, message="ID %s not found" % id)
+            return todo
         return sorted(ToDo.query, key=lambda x: x.id)
 
     @marshal_with(resource_fields)
@@ -50,8 +51,16 @@ class ToDoResource(Resource):
         todo = ToDo.query.filter(ToDo.id==id).first()
         if not todo:
             abort(404, id=id, message="ID %s not found" % id)
+        #TODO: validate etag?
         self._update(todo)
         return todo
-        #TODO: "validate etag"
 
+    @marshal_with(resource_fields)
+    def delete(self, id):
+        todo = ToDo.query.filter(ToDo.id==id).first()
+        if not todo:
+            abort(404, id=id, message="ID %s not found" % id)
+        session.delete(todo)
+        session.commit()
+        return todo
 

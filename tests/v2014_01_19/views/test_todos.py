@@ -58,3 +58,8 @@ class TestToDos(ResourceTestCase):
     def test_update_not_found(self):
         json = self.json_PUT(id=1, is_done=True, expect_status_code=404)
         assert_equal(json["id"], 1)
+
+    def test_delete(self):
+        todo = ToDoFactory()
+        json = self.json_DELETE(id=todo.id)
+        assert_is_none(ToDo.by_id(todo.id))
