@@ -1,1 +1,1 @@
-from todo_views import ToDoResource
+from todo_views import TaskResource
